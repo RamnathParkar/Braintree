@@ -25,6 +25,16 @@
 | C-a A        | title         | Allow the user to enter a name for the |
 |              |               | current window.                        |
 '--------------+---------------+----------------------------------------'
+
+Add ".screenrc" to your home directory
+-------------------------------------------------------------------------
+screen -t title1 1 command args
+screen -t title2 2 command args
+....
+-------------------------------------------------------------------------
+When you run screen command, all above screens would be added by execution of specified commands
+Use ^A n to switch among these screens
+
 | C-a b        | break         | Send a break to window.                |
 | C-a C-b      |               |                                        |
 '--------------+---------------+----------------------------------------'
