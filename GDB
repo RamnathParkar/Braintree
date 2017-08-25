@@ -1,0 +1,3 @@
+GDB Text User Mode
+For the ncurses add following variable 
+export NCURSES_NO_UTF8_ACS=1
