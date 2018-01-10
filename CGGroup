@@ -1,0 +1,74 @@
+CGROUP
+
+CPU Management 
+
+1. mkdir -p /opt/sterling/cgroup/CPU
+2. mount -t cgroup -o cpu CPU /opt/sterling/cgroup/CPU
+
+3. lscgroup 
+   cpu:/
+   
+4. ls /opt/sterling/cgroup/CPU
+total 0
+--w--w--w-. 1 root root 0 Jan 10 11:08 cgroup.event_control
+-rw-r--r--. 1 root root 0 Jan 10 11:08 cgroup.procs
+-rw-r--r--. 1 root root 0 Jan 10 11:08 cpu.cfs_period_us
+-rw-r--r--. 1 root root 0 Jan 10 11:08 cpu.cfs_quota_us
+-rw-r--r--. 1 root root 0 Jan 10 11:08 cpu.rt_period_us
+-rw-r--r--. 1 root root 0 Jan 10 11:08 cpu.rt_runtime_us
+-rw-r--r--. 1 root root 0 Jan 10 11:08 cpu.shares
+-r--r--r--. 1 root root 0 Jan 10 11:08 cpu.stat
+-rw-r--r--. 1 root root 0 Jan 10 11:08 notify_on_release
+-rw-r--r--. 1 root root 0 Jan 10 11:08 release_agent
+-rw-r--r--. 1 root root 0 Jan 10 11:08 tasks
+
+5. Check cpu.shares ( default is 1024 )
+# cat /opt/sterling/cgroup/CPU/cpu.shares
+1024
+
+6. cd /opt/sterling/cgroup/CPU
+   mkdir web dba
+   ls -l web 
+   --w--w--w-. 1 root root 0 Jan 10 14:20 cgroup.event_control
+   -rw-r--r--. 1 root root 0 Jan 10 14:20 cgroup.procs
+   -rw-r--r--. 1 root root 0 Jan 10 14:20 cpu.cfs_period_us
+   -rw-r--r--. 1 root root 0 Jan 10 14:20 cpu.cfs_quota_us
+   -rw-r--r--. 1 root root 0 Jan 10 14:20 cpu.rt_period_us
+   -rw-r--r--. 1 root root 0 Jan 10 14:20 cpu.rt_runtime_us
+   -rw-r--r--. 1 root root 0 Jan 10 14:20 cpu.shares
+   -r--r--r--. 1 root root 0 Jan 10 14:20 cpu.stat
+   -rw-r--r--. 1 root root 0 Jan 10 14:20 notify_on_release
+   -rw-r--r--. 1 root root 0 Jan 10 14:20 tasks
+   
+ 7. cat web/cpu.shares
+    1024
+    
+ 8. lscgroup
+    cpu:/
+    cpu:/dba
+    cpu:/web
+
+9.  echo 768 > dba/cpu.shares
+    echo 256 > web/cpu.shares
+    
+     cgget -r cpu.shares web
+     web:
+     cpu.shares: 256
+
+     cgget -r cpu.shares dba
+     dba:
+     cpu.shares: 768
+     
+10.  Create multiple processes of cmd1 
+     cmd1 & 
+     cmd1 & 
+     ....
+     move above processes to web group
+     cgclassify -g cpu:web pid1
+     cgclassify -g cpu:web pid2
+     ....
+11.  Create a processe of cmd2
+     move this process to dba group 
+     cgclassify -g cpu:dba pid
+     
+12.  Compare CPU utilization by top command
